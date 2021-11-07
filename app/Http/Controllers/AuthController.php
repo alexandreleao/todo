@@ -48,7 +48,7 @@ class AuthController extends Controller
     {
         $array = ['error' => ''];
 
-        $creds = $request->only('email','password');
+       $creds = $request->only('email', 'password');
 
        if(Auth::attempt($creds)){
             $user = User::where('email', $creds['email'])->first();
@@ -56,11 +56,22 @@ class AuthController extends Controller
             $item = time().rand(0,9999);
             $token = $user->createToken($item)->plainTextToken;
 
-            $array['token'] =$token;
+            $array['token'] = $token; //2|05fnxMWnxq9r41PRJdP7n6ZIOuB7dSLdcCpAoNSw
 
        } else {
            $array['error'] = 'E-mail e/ou senha incorretos';
        }
+       
+        return $array;
+    }
+
+    public function logout(Request $request)
+    {
+        $array = ['error' => ''];
+
+        $user = $request->user();
+        $user->tokens()->delete();
+       // $array['email'] = $user->email;
 
         return $array;
     }
